@@ -1,19 +1,46 @@
 import sys
 import math
 from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QMainWindow, QGridLayout, QWidget, QTableWidget, QTableWidgetItem
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
 
 
 class MyWidget(QMainWindow):
     def __init__(self):
+        self.func = None
+        self.begin = None
+        self.d = None
+        self.start_d = 'd=1 (const)'
+        self.start_f = 'func'
+        self.start_x = 'x0'
         super().__init__()
         uic.loadUi('funkzia1.ui', self)
         self.btn.clicked.connect(self.hello)
 
     def hello(self):
-        func = self.func_inp.text()
-        self.test.setText(func)
+        self.func = self.func_inp.text()
+        if self.x_start.text() != self.start_x:
+            self.begin = int(self.x_start.text())
+        if self.dif.text() != self.start_d:
+            self.d = int(self.dif.text())
+        self.value_table.setItem(0, 0, QTableWidgetItem(self.get_func_value(self.begin)))
+        self.value_table.setItem(1, 0, QTableWidgetItem(self.get_func_value(self.begin+1*self.d)))
+        self.value_table.setItem(2, 0, QTableWidgetItem(self.get_func_value(self.begin + 2*self.d)))
+        self.value_table.setVerticalHeaderItem(0, QTableWidgetItem(str(self.begin)))
+        self.value_table.setVerticalHeaderItem(1, QTableWidgetItem(str(self.begin+self.d)))
+        self.value_table.setVerticalHeaderItem(2, QTableWidgetItem(str(self.begin+2*self.d)))
+        #self.test.setText(d)
 
+    def get_func_value(self,x):
+        new_exp = ''
+        for elem in self.func:
+            if elem == 'x':
+                new_exp += str(x)
+            else:
+                new_exp += elem
+        res = eval(new_exp)
+        print(res)
+        return str(res)
 
 app = QApplication(sys.argv)
 ex = MyWidget()
