@@ -38,11 +38,6 @@
       <string>x2</string>
      </property>
     </row>
-    <row>
-     <property name="text">
-      <string>New Row</string>
-     </property>
-    </row>
     <column>
      <property name="text">
       <string>y:</string>
@@ -111,7 +106,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>n=3</string>
+     <string>n=2 (const)</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="dif">
@@ -134,7 +129,7 @@
      <x>0</x>
      <y>0</y>
      <width>458</width>
-     <height>21</height>
+     <height>18</height>
     </rect>
    </property>
   </widget>
