@@ -1,0 +1,21 @@
+import sys
+import math
+from PyQt5 import uic
+from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+
+
+class MyWidget(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        uic.loadUi('funkzia1.ui', self)
+        self.btn.clicked.connect(self.hello)
+
+    def hello(self):
+        func = self.func_inp.text()
+        self.test.setText(func)
+
+
+app = QApplication(sys.argv)
+ex = MyWidget()
+ex.show()
+sys.exit(app.exec_())
