@@ -2,35 +2,54 @@ import sys
 import math
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication, QMainWindow, QGridLayout, QWidget, QTableWidget, QTableWidgetItem
-from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow
+
 
 
 class MyWidget(QMainWindow):
     def __init__(self):
+        #None просто написал как стартовое значение ,чтобы потом ,если где использовалась бы неинециализированная переменная, возникла бы ошыбка
+        #уравнение функции тип str
         self.func = None
+        #x0 тип int
         self.begin = None
+        #d
         self.d = None
-        self.start_d = 'd=1 (const)'
-        self.start_f = 'func'
-        self.start_x = 'x0'
+        # текущие d f x ,чтобы потом смотреть
+        #нажав на кнопку подтвердить что именно чувак изменил
+        self.cur_d = 'd=1 (const)'
+        self.cur_f = 'func'
+        self.cur_x = 'x0'
         super().__init__()
         uic.loadUi('funkzia1.ui', self)
         self.btn.clicked.connect(self.hello)
 
     def hello(self):
         self.func = self.func_inp.text()
-        if self.x_start.text() != self.start_x:
+        #в этих двух ифах мы как раз-таки проверяем ,изменились ли
+        #да , для f тож над сделать проверку
+        #если не ясно ,что это за переменные сразу после ифа ,то посмотри дизайнера
+        if self.x_start.text() != self.cur_x:
             self.begin = int(self.x_start.text())
-        if self.dif.text() != self.start_d:
+        if self.dif.text() != self.cur_d:
             self.d = int(self.dif.text())
+        #тут заносим в три клетки таблицы f(x0) f(x0+d) f(x0+2d)
         self.value_table.setItem(0, 0, QTableWidgetItem(self.get_func_value(self.begin)))
         self.value_table.setItem(1, 0, QTableWidgetItem(self.get_func_value(self.begin+1*self.d)))
         self.value_table.setItem(2, 0, QTableWidgetItem(self.get_func_value(self.begin + 2*self.d)))
+        #тут меняем горизонтальные имена в таблицы ,чтобы x1,x2,x3 стали показывать свои реальные значения
         self.value_table.setVerticalHeaderItem(0, QTableWidgetItem(str(self.begin)))
         self.value_table.setVerticalHeaderItem(1, QTableWidgetItem(str(self.begin+self.d)))
         self.value_table.setVerticalHeaderItem(2, QTableWidgetItem(str(self.begin+2*self.d)))
         #self.test.setText(d)
-
+    #ета функция нужна ,чтобы выполнить собственно f(x)
+    #тут такой чыт используется ,eval() - це функция ,которая
+    # строку обрабатывает как командная строка
+    #например eval(2** 3 + 6 *7) = 50
+    #поэому мы в self.func пробегаемся по елементам и смотри ,ежели 'x' ,то меняем на x из аргумента(да тут нихуя не понятно)
+    #я имею в вижу это :
+    # x ** 2 + 3x (пусть такой self.func) с помощью этой функиции приобразуется в
+    # 6 ** 2 + 3 * 6 ( если x в аргументах равен 6)
+    #и дальше eval() высчитывает
     def get_func_value(self,x):
         new_exp = ''
         for elem in self.func:
