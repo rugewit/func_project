@@ -14,35 +14,60 @@ class MyWidget(QMainWindow):
         self.x0 = None
         #d
         self.d = None
+        #n
+        self.n = 3
         # текущие d f x ,чтобы потом смотреть
         #нажав на кнопку подтвердить что именно чувак изменил
-        self.cur_d = 'd=1 (const)'
+        self.cur_d = 'd'
         self.cur_f = 'func'
         self.cur_x0 = 'x0'
+        self.cur_n = 'n'
         super().__init__()
         uic.loadUi('funkzia1.ui', self)
         self.btn.clicked.connect(self.hello)
 
     def hello(self):
-        self.func = self.func_inp.text()
+        self.warning.setText('')
+        error_mess = 'проинициализируйте:\n'
+        if self.x_start.text() == 'x0':
+            error_mess += 'x0\n'
+        if self.func_inp.text() == 'func':
+            error_mess += 'f(x)\n'
+        if self.dif.text() == 'd':
+            error_mess += 'd\n'
+        if self.num.text() == 'n':
+            error_mess += 'n\n'
+        if error_mess != 'проинициализируйте:\n':
+            self.warning.setText(error_mess)
+            return
         #в этих двух ифах мы как раз-таки проверяем ,изменились ли
         #да , для f тож над сделать проверку
         #если не ясно ,что это за переменные сразу после ифа ,то посмотри дизайнера
-        if self.x_start.text() != self.cur_x0:
-            self.x0 = int(self.x_start.text())
-            self.cur_x0= self.x0
-        if self.dif.text() != self.cur_d:
-            self.d = int(self.dif.text())
-            self.cur_d = self.d
+        try:
+            if self.x_start.text() != str(self.cur_x0):
+                self.x0 = int(self.x_start.text())
+                self.cur_x0= self.x0
+            if self.dif.text() != str(self.cur_d):
+                self.d = int(self.dif.text())
+                self.cur_d = self.d
+            temp = self.get_func_value(6,self.func_inp.text())
+            if self.num.text() != str(self.n):
+                self.n = int(self.num.text())
+                self.cur_n = self.n
+            if self.func_inp.text() != self.func:
+                self.func = self.func_inp.text()
+                self.cur_f = self.func
+        except Exception:
+            self.warning.setText('упс,что-то пошло не так\n Вы неправильно ввели данные')
+            return
+        if self.n >= 13:
+            self.warning.setText('слишком большой n !')
+            return
+        self.value_table.setRowCount(self.n)
         #тут заносим в три клетки таблицы f(x0) f(x0+d) f(x0+2d)
-        self.value_table.setItem(0, 0, QTableWidgetItem(self.get_func_value(self.x0)))
-        self.value_table.setItem(1, 0, QTableWidgetItem(self.get_func_value(self.x0+1*self.d)))
-        self.value_table.setItem(2, 0, QTableWidgetItem(self.get_func_value(self.x0 + 2*self.d)))
-        #тут меняем горизонтальные имена в таблицы ,чтобы x1,x2,x3 стали показывать свои реальные значения
-        self.value_table.setVerticalHeaderItem(0, QTableWidgetItem(str(self.x0)))
-        self.value_table.setVerticalHeaderItem(1, QTableWidgetItem(str(self.x0+self.d)))
-        self.value_table.setVerticalHeaderItem(2, QTableWidgetItem(str(self.x0+2*self.d)))
-        #self.test.setText(d)
+        for i in range(self.n):
+            self.value_table.setItem(i, 0, QTableWidgetItem(self.get_func_value(self.x0+self.d*i,self.func)))
+            self.value_table.setVerticalHeaderItem(i, QTableWidgetItem(str(self.x0+self.d*i)))
     #ета функция нужна ,чтобы выполнить собственно f(x)
     #тут такой чыт используется ,eval() - це функция ,которая
     # строку обрабатывает как командная строка
@@ -52,9 +77,9 @@ class MyWidget(QMainWindow):
     # x ** 2 + 3x (пусть такой self.func) с помощью этой функиции приобразуется в
     # 6 ** 2 + 3 * 6 ( если x в аргументах равен 6)
     #и дальше eval() высчитывает
-    def get_func_value(self,x):
+    def get_func_value(self,x,u):
         new_exp = ''
-        for elem in self.func:
+        for elem in u:
             if elem == 'x':
                 new_exp += str(x)
             else:
