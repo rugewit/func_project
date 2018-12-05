@@ -18,7 +18,7 @@ class MyWidget(QMainWindow):
         #нажав на кнопку подтвердить что именно чувак изменил
         self.cur_d = 'd=1 (const)'
         self.cur_f = 'func'
-        self.cur_x = 'x0'
+        self.cur_x0 = 'x0'
         super().__init__()
         uic.loadUi('funkzia1.ui', self)
         self.btn.clicked.connect(self.hello)
@@ -28,10 +28,12 @@ class MyWidget(QMainWindow):
         #в этих двух ифах мы как раз-таки проверяем ,изменились ли
         #да , для f тож над сделать проверку
         #если не ясно ,что это за переменные сразу после ифа ,то посмотри дизайнера
-        if self.x_start.text() != self.cur_x:
+        if self.x_start.text() != self.cur_x0:
             self.begin = int(self.x_start.text())
+            self.cur_x0= self.begin
         if self.dif.text() != self.cur_d:
             self.d = int(self.dif.text())
+            self.cur_d = self.d
         #тут заносим в три клетки таблицы f(x0) f(x0+d) f(x0+2d)
         self.value_table.setItem(0, 0, QTableWidgetItem(self.get_func_value(self.begin)))
         self.value_table.setItem(1, 0, QTableWidgetItem(self.get_func_value(self.begin+1*self.d)))
